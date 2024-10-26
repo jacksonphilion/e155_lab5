@@ -96,7 +96,7 @@ int main(void){
 
 
 // EXTI[9:5] Interrupt on PA6
-void EXTI9_5IRQHandler(void){
+void EXTI9_5_IRQHandler(void){
     A = digitalRead(A_PIN);         // Read the new value of A
     // If an A interrupt and we have A=1 and B=1, then special:
     if ((A==1)&(B==1)) {
@@ -107,7 +107,7 @@ void EXTI9_5IRQHandler(void){
 }
 
 // EXTI4 Interrupt on PB4
-void EXTI4IRQHandler(void){
+void EXTI4_IRQHandler(void){
     B = digitalRead(B_PIN);         // Read the new value of B
     // If an B interrupt and we have A=1 and B=1, then special:
     if ((A==1)&(B==1)) {
