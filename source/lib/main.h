@@ -15,7 +15,7 @@
 
 #define A_PIN PA6
 #define B_PIN PB4
-#define COUNT_TIM TIM2
+#define COUNTING_TIM TIM2
 #define FRAME_TIM TIM6
 #define FRAME_MS 250
 
