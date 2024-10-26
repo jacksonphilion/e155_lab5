@@ -13,7 +13,7 @@
 // Custom defines
 ///////////////////////////////////////////////////////////////////////////////
 
-#define A_PIN PA6
+#define A_PIN PA8
 #define B_PIN PB4
 #define COUNTING_TIM TIM2
 #define FRAME_TIM TIM6

@@ -38,6 +38,8 @@ int main(void){
 
     gpioEnable(GPIO_PORT_A);
     pinMode(A_PIN, GPIO_INPUT);
+    // GPIOA->PUPDR &= (~(0b11<<12));  // Clear the 13:12 bits of PUPDR
+    // GPIOA->PUPDR |= (0b01<<12);     // Set the 13:12 bits of PUPDR to 
     gpioEnable(GPIO_PORT_B);
     pinMode(B_PIN, GPIO_INPUT);
 
@@ -53,8 +55,8 @@ int main(void){
     // Enable SYSCFG clock domain in RCC: RCC_APB2ENR SYSCFGEN [0] to 1
     RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
     // Configure EXTICR to grab PA6 and PB4
-    SYSCFG->EXTICR[2] |= _VAL2FLD(SYSCFG_EXTICR2_EXTI6, 0b000); // Select PA6
-    SYSCFG->EXTICR[2] |= _VAL2FLD(SYSCFG_EXTICR2_EXTI4, 0b001); // Select PB4
+    SYSCFG->EXTICR[2] |= _VAL2FLD(SYSCFG_EXTICR3_EXTI8, 0b000); // Select PA6
+    SYSCFG->EXTICR[1] |= _VAL2FLD(SYSCFG_EXTICR2_EXTI4, 0b001); // Select PB4
     // Enable interrupts globally
     __enable_irq();         
     // 1. Configure mask bit
@@ -83,7 +85,7 @@ int main(void){
         if (counterGrab) {RPM = 500000/counterGrab; }           // Compute Stored Counter Value into RPM
         else {RPM=0;}                                           // If counterGrab is 0, RPM gets 0
         if (!RPM) {printf("Motor is stopped, 0 RPM\n");}
-        if (direction==1) {
+        else if (direction==1) {
             printf("Motor spins at: %f, AAwise\n", RPM); }      // AA dir Print Statement
         else if (direction==2) {
             printf("Motor spins at: %f, BBwise\n", RPM); }      // BB dir Print Statement
@@ -95,9 +97,12 @@ int main(void){
 }
 
 
-// EXTI[9:5] Interrupt on PA6
+// EXTI[9:5] Interrupt on PA8
 void EXTI9_5_IRQHandler(void){
     A = digitalRead(A_PIN);         // Read the new value of A
+    if (EXTI->PR1 & (1 << 8)){      // Confirm that our PA8 flag is up
+        EXTI->PR1 |= (1 << 8);}     // If so, clear the interrupt (NB: Write 1 to reset.)
+
     // If an A interrupt and we have A=1 and B=1, then special:
     if ((A==1)&(B==1)) {
         counterGrab = COUNTING_TIM->CNT;   // Log the Count level
@@ -109,6 +114,9 @@ void EXTI9_5_IRQHandler(void){
 // EXTI4 Interrupt on PB4
 void EXTI4_IRQHandler(void){
     B = digitalRead(B_PIN);         // Read the new value of B
+    if (EXTI->PR1 & (1 << 4)){      // Confirm that our PB4 flag is up
+        EXTI->PR1 |= (1 << 4);}     // If so, clear the interrupt (NB: Write 1 to reset.)
+
     // If an B interrupt and we have A=1 and B=1, then special:
     if ((A==1)&(B==1)) {
         counterGrab = COUNTING_TIM->CNT;   // Log the Count level
