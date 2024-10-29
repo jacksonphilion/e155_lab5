@@ -19,8 +19,11 @@ here: https://github.com/HMC-E155/tutorial-interrupts/
 ////////////  CREATE GLOBAL VARIABLES  /////////////////////////////////
 
 int direction = 0;
-double counterGrab = 0;
-double RPM = 0;
+double counterGrab0 = 0;
+double counterGrab1 = 0;
+double counterGrab2 = 0;
+double counterGrab3 = 0;
+double RPS = 0;
 uint8_t A = 0;
 uint8_t B = 0;
 
@@ -82,16 +85,16 @@ int main(void){
 
     while (1) {
         delay_millis(FRAME_TIM, FRAME_MS);                      // Generate delay of FRAME_MS (in main.h)
-        if (counterGrab) {RPM = 500000/counterGrab; }           // Compute Stored Counter Value into RPM
-        else {RPM=0;}                                           // If counterGrab is 0, RPM gets 0
-        if (!RPM) {printf("Motor is stopped, 0 RPM\n");}
+        if (counterGrab0) {RPS = 8333/((counterGrab0+counterGrab1+counterGrab2+counterGrab3)/4); }           // Compute Stored Counter Value into RPS
+        else {RPS=0;}                                           // If counterGrab0 is 0, RPS gets 0
+        if (!RPS) {printf("Motor is stopped, 0 RPS\n");}
         else if (direction==1) {
-            printf("Motor spins at: %f, AAwise\n", RPM); }      // AA dir Print Statement
+            printf("Motor spins at: %f rev/s, AAwise\n", RPS); }      // AA dir Print Statement
         else if (direction==2) {
-            printf("Motor spins at: %f, BBwise\n", RPM); }      // BB dir Print Statement
+            printf("Motor spins at: %f rev/s, BBwise\n", RPS); }      // BB dir Print Statement
         else {
             printf("Motor has not yet started\n"); }            // Undefined Print Statement
-        counterGrab = 0;                                        // Reset the counterGrab so that 0 logs next
+        counterGrab0 = 0;                                        // Reset the counterGrab0 so that 0 logs next
     }
     //:::*:::::::*:::::::*:::::*::  END MAIN  ::::*::::::*:::::::*:::::::*::
 }
@@ -104,10 +107,13 @@ void EXTI9_5_IRQHandler(void){
         EXTI->PR1 |= (1 << 8);}     // If so, clear the interrupt (NB: Write 1 to reset.)
 
     // If an A interrupt and we have A=1 and B=1, then special:
-    if ((A==1)&(B==1)) {
-        counterGrab = COUNTING_TIM->CNT;   // Log the Count level
-        direction = 1;                  // Log the Direction
+    if (A&&B) {
+        counterGrab3 = counterGrab2;
+        counterGrab2 = counterGrab1;
+        counterGrab1 = counterGrab0;
+        counterGrab0 = COUNTING_TIM->CNT;   // Log the Count level
         COUNTING_TIM->EGR |= 0b1;          // Reset the Counter
+        direction = 1;                  // Log the Direction
     }
 }
 
@@ -118,10 +124,13 @@ void EXTI4_IRQHandler(void){
         EXTI->PR1 |= (1 << 4);}     // If so, clear the interrupt (NB: Write 1 to reset.)
 
     // If an B interrupt and we have A=1 and B=1, then special:
-    if ((A==1)&(B==1)) {
-        counterGrab = COUNTING_TIM->CNT;   // Log the Count level
-        direction = 2;                  // Log the Direction
+    if (A&&B) {
+        counterGrab3 = counterGrab2;
+        counterGrab2 = counterGrab1;
+        counterGrab1 = counterGrab0;
+        counterGrab0 = COUNTING_TIM->CNT;   // Log the Count level
         COUNTING_TIM->EGR |= 0b1;          // Reset the Counter
+        direction = 2;                  // Log the Direction
     }
 }
 
