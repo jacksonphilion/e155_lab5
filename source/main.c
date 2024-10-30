@@ -19,10 +19,8 @@ here: https://github.com/HMC-E155/tutorial-interrupts/
 ////////////  CREATE GLOBAL VARIABLES  /////////////////////////////////
 
 int direction = 0;
-double counterGrab0 = 0;
-double counterGrab1 = 0;
-double counterGrab2 = 0;
-double counterGrab3 = 0;
+double logB = 0;
+double logA = 0;
 double RPS = 0;
 uint8_t A = 0;
 uint8_t B = 0;
@@ -48,9 +46,9 @@ int main(void){
 
     ////////////  Initialize the Counting and Frame Timer  //////////////
 
-    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
+    // RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
     RCC->APB1ENR1 |= RCC_APB1ENR1_TIM6EN;
-    initTIM_micro(COUNTING_TIM);  // Initialize TIM2, gets 1micros from prescaler
+    // initTIM_micro(COUNTING_TIM);  // Initialize TIM2, gets 1micros from prescaler
     initTIM_milli(FRAME_TIM);     // Initialize TIM6, gets 1millis from prescaler
 
     ////////////  Configure the A and B interrupts  /////////////////////
@@ -85,7 +83,7 @@ int main(void){
 
     while (1) {
         delay_millis(FRAME_TIM, FRAME_MS);                      // Generate delay of FRAME_MS (in main.h)
-        if (counterGrab0) {RPS = 8333/((counterGrab0+counterGrab1+counterGrab2+counterGrab3)/4); }           // Compute Stored Counter Value into RPS
+        if (logA||logB) {RPS = (((logA/120)+(logB/120))*topFactor/(2*botFactor)); }   // Compute Stored Counter Value into RPS
         else {RPS=0;}                                           // If counterGrab0 is 0, RPS gets 0
         if (!RPS) {printf("Motor is stopped, 0 RPS\n");}
         else if (direction==1) {
@@ -94,7 +92,8 @@ int main(void){
             printf("Motor spins at: %f rev/s, BBwise\n", RPS); }      // BB dir Print Statement
         else {
             printf("Motor has not yet started\n"); }            // Undefined Print Statement
-        counterGrab0 = 0;                                        // Reset the counterGrab0 so that 0 logs next
+        logA = 0;                                        // Reset the logs
+        logB = 0;
     }
     //:::*:::::::*:::::::*:::::*::  END MAIN  ::::*::::::*:::::::*:::::::*::
 }
@@ -103,16 +102,11 @@ int main(void){
 // EXTI[9:5] Interrupt on PA8
 void EXTI9_5_IRQHandler(void){
     A = digitalRead(A_PIN);         // Read the new value of A
+    logA++;
     if (EXTI->PR1 & (1 << 8)){      // Confirm that our PA8 flag is up
         EXTI->PR1 |= (1 << 8);}     // If so, clear the interrupt (NB: Write 1 to reset.)
-
     // If an A interrupt and we have A=1 and B=1, then special:
     if (A&&B) {
-        counterGrab3 = counterGrab2;
-        counterGrab2 = counterGrab1;
-        counterGrab1 = counterGrab0;
-        counterGrab0 = COUNTING_TIM->CNT;   // Log the Count level
-        COUNTING_TIM->EGR |= 0b1;          // Reset the Counter
         direction = 1;                  // Log the Direction
     }
 }
@@ -120,16 +114,11 @@ void EXTI9_5_IRQHandler(void){
 // EXTI4 Interrupt on PB4
 void EXTI4_IRQHandler(void){
     B = digitalRead(B_PIN);         // Read the new value of B
+    logB++;
     if (EXTI->PR1 & (1 << 4)){      // Confirm that our PB4 flag is up
         EXTI->PR1 |= (1 << 4);}     // If so, clear the interrupt (NB: Write 1 to reset.)
-
     // If an B interrupt and we have A=1 and B=1, then special:
     if (A&&B) {
-        counterGrab3 = counterGrab2;
-        counterGrab2 = counterGrab1;
-        counterGrab1 = counterGrab0;
-        counterGrab0 = COUNTING_TIM->CNT;   // Log the Count level
-        COUNTING_TIM->EGR |= 0b1;          // Reset the Counter
         direction = 2;                  // Log the Direction
     }
 }

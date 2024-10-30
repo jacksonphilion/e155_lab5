@@ -17,6 +17,9 @@
 #define B_PIN PB4
 #define COUNTING_TIM TIM2
 #define FRAME_TIM TIM6
-#define FRAME_MS 250
+#define FRAME_MS 500
+
+#define topFactor 947
+#define botFactor 740
 
 #endif // MAIN_H

@@ -57,12 +57,12 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="86" useTextEdit="1" path="../source/main.c" left="0" top="77" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="23" y="9" useTextEdit="1" path="../source/lib/main.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="27" useTextEdit="1" path="../source/lib/STM32L432KC_RCC.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="80" y="85" useTextEdit="1" path="../source/main.c" left="0" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="18" useTextEdit="1" path="../source/lib/main.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="41" y="7" useTextEdit="1" path="../source/lib/STM32L432KC_RCC.c" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="95" useTextEdit="1" path="../source/lib/STM32L432KC_GPIO.c" left="0" top="74" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="950" useTextEdit="1" path="CMSIS_5/CMSIS/Core/Include/cmsis_gcc.h" left="0" top="936" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="37" useTextEdit="1" path="../source/lib/STM32L432KC_TIM.c" left="0" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="37" useTextEdit="1" path="../source/lib/STM32L432KC_TIM.c" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="2" y="101" useTextEdit="1" path="STM32L4xx/Device/Include/stm32l432xx.h" left="0" top="66" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="lab5v1" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3711"/>
